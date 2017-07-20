@@ -1,3 +1,13 @@
+# Processing Mod
+
+This forked version of Processing.js contains these slight changes:
+
+* Support for changing the width via CSS
+  * Assumes that the Processing canvas element has an element around it that is either the same width (after scaling) or the same height (after scaling)
+  * The canvas should maintain the aspect ratio.
+  * The formula for calculating the scale factor is as follows:
+    * Math.min( ( parentWidth / canvasWidth ), ( parentHeight / canvasHeight )
+
 # Processing.js
 
 For the project website, visit http://processingjs.org
