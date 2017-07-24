@@ -118,28 +118,24 @@ var postOp = function() {
   console.log("\n"+_passcount+" tests passed, "+_failcount+" tests failed.\n");
 
   if(_failcount===0 && !argv.nobuild) {
-    console.log("\nall tests pass: building processing.js...");
-    exec('browserify build.js -o processing.js', function() {
-      console.log("build finished.");
-      console.log("minifying to processing.min.js");
-      exec('node minify', function() {
-        console.log("finished");
-        if(!argv.noref) {
-          console.log("\nStarting web server for reference testing...");
-          console.log("Test server will terminate once all tests have run.");
-          exec('node server', function(error, stdout, stderr) {
-            var lines = stdout.split("\n"),
-                len = lines.length,
-                counts = lines[len-2].split(".").map(function(v) { return parseInt(v, 10); }),
-                failed = counts[0] + counts[1],
-                known = counts[1],
-                passed = counts[2];
-            console.log("done - "+passed+" tests passed, "+failed+" tests failed (of which "+known+" known fails).");
-          });
-          // open reference tests in the browser and auto-run
-          open("http://localhost:3000/ref/" + (argv.noautoref ? '' : "?autorun=true"));
-        }
-      });
+    console.log("\nall tests pass: building processing.js and processing.min.js...");
+    exec('./makejs.sh', function() {
+      console.log("finished");
+      if(!argv.noref) {
+        console.log("\nStarting web server for reference testing...");
+        console.log("Test server will terminate once all tests have run.");
+        exec('node server', function(error, stdout, stderr) {
+          var lines = stdout.split("\n"),
+            len = lines.length,
+            counts = lines[len-2].split(".").map(function(v) { return parseInt(v, 10); }),
+            failed = counts[0] + counts[1],
+            known = counts[1],
+            passed = counts[2];
+          console.log("done - "+passed+" tests passed, "+failed+" tests failed (of which "+known+" known fails).");
+        });
+        // open reference tests in the browser and auto-run
+        open("http://localhost:3000/ref/" + (argv.noautoref ? '' : "?autorun=true"));
+      }
     });
   }
 };

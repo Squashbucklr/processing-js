@@ -61,10 +61,6 @@ module.exports = function withTouch(p, curElement, attachEventHandler, detachEve
     // Dropping support for IE clientX and clientY, switching to pageX and pageY
     // so we don't have to calculate scroll offset.
     // Removed in ticket #184. See rev: 2f106d1c7017fed92d045ba918db47d28e5c16f4
-      
-    //////////////////
-    //PROCESSING-MOD//
-    //////////////////
     
     //Injected Code
     var canvasWidth = curElement.getAttribute('width');
@@ -80,10 +76,6 @@ module.exports = function withTouch(p, curElement, attachEventHandler, detachEve
     //Original Code
     //p.mouseX = (event.pageX - offset.X) / scale;
     //p.mouseY = (event.pageY - offset.Y) / scale;
-    
-    //////////////////////
-    //END PROCESSING-MOD//
-    //////////////////////
       
   }
 

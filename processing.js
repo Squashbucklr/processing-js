@@ -391,125 +391,19 @@ module.exports = {
 },{}],5:[function(require,module,exports){
 // the logger for print() and println()
 module.exports = function PjsConsole(document) {
-  var e = { BufferMax: 200 },
-      style = document.createElement("style"),
-      added = false;
-
-  style.textContent = [
-    ".pjsconsole.hidden {",
-    "  display: none!important;",
-    "}"
-  ].join('\n');
-
-  e.wrapper = document.createElement("div");
-  style.textContent += [
-    "",
-    ".pjsconsole {",
-    "  opacity: .75;",
-    "  display: block;",
-    "  position: fixed;",
-    "  bottom: 0px;",
-    "  left: 0px;",
-    "  right: 0px;",
-    "  height: 50px;",
-    "  background-color: #aaa;",
-    "}"
-  ].join('\n');
-  e.wrapper.classList.add("pjsconsole");
-
-  e.dragger = document.createElement("div");
-  style.textContent += [
-    "",
-    ".pjsconsole .dragger {",
-    "  display: block;",
-    "  border: 3px black raised;",
-    "  cursor: n-resize;",
-    "  position: absolute;",
-    "  top: 0px;",
-    "  left: 0px;",
-    "  right: 0px;",
-    "  height: 5px;",
-    "  background-color: #333;",
-    "}"
-  ].join('\n');
-  e.dragger.classList.add("dragger");
-
-  e.closer = document.createElement("div");
-  style.textContent += [
-    "",
-    ".pjsconsole .closer {",
-    "  opacity: .5;",
-    "  display: block;",
-    "  border: 3px black raised;",
-    "  position: absolute;",
-    "  top: 10px;",
-    "  right: 30px;",
-    "  height: 20px;",
-    "  width: 20px;",
-    "  background-color: #ddd;",
-    "  color: #000;",
-    "  line-height: 20px;",
-    "  text-align: center;",
-    "  cursor: pointer",
-    "}"
-  ].join('\n');
-  e.closer.classList.add("closer");
-  e.closer.innerHTML = "&#10006;";
-
-  e.javaconsole = document.createElement("div");
-  style.textContent += [
-    "",
-    ".pjsconsole .console {",
-    "  overflow-x: auto;",
-    "  display: block;",
-    "  position: absolute;",
-    "  left: 10px;",
-    "  right: 0px;",
-    "  bottom: 5px;",
-    "  top: 10px;",
-    "  overflow-y: scroll;",
-    "  height: 40px;",
-    "}"
-  ].join('\n');
-  e.javaconsole.setAttribute("class", "console");
-
-  e.wrapper.appendChild(e.dragger);
-  e.wrapper.appendChild(e.javaconsole);
-  e.wrapper.appendChild(e.closer);
-
-  e.dragger.onmousedown = function (t) {
-    e.divheight = e.wrapper.style.height;
-    if (document.selection) document.selection.empty();
-    else window.getSelection().removeAllRanges();
-    var n = t.screenY;
-    window.onmousemove = function (t) {
-      e.wrapper.style.height = parseFloat(e.divheight) + (n - t.screenY) + "px";
-      e.javaconsole.style.height = parseFloat(e.divheight) + (n - t.screenY) - 10 + "px";
-    };
-    window.onmouseup = function (t) {
-      if (document.selection) document.selection.empty();
-      else window.getSelection().removeAllRanges();
-      e.wrapper.style.height = parseFloat(e.divheight) + (n - t.screenY) + "px";
-      e.javaconsole.style.height = parseFloat(e.divheight) + (n - t.screenY) - 10 + "px";
-      window.onmousemove = null;
-      window.onmouseup = null;
-    };
-  };
-
+  var e = { BufferMax: 200 };
+  e.javaconsole = document.getElementById('new-processing-console');
+  console.log(e.javaconsole);
   e.BufferArray = [];
 
   e.print = e.log = function () {
-    if(!added) {
-      document.body.appendChild(style);
-      document.body.appendChild(e.wrapper);
-      added = true;
-    }
+    e.javaconsole = document.getElementById('new-processing-console');
     var args = Array.prototype.slice.call(arguments);
-    t = args.map(function(t, idx) { return t + (idx+1 === args.length ? "" : " "); }).join('');
+    var t = args.map(function(t, idx) { return t + (idx+1 === args.length ? "" : " "); }).join('');
     if (e.BufferArray[e.BufferArray.length - 1]) e.BufferArray[e.BufferArray.length - 1] += (t) + "";
     else e.BufferArray.push(t);
-    e.javaconsole.innerHTML = e.BufferArray.join('');
-    e.showconsole();
+    if(e.BufferArray.join('') !== null) e.javaconsole.innerHTML = e.BufferArray.join('');
+    
   };
 
   e.println = function () {
@@ -519,16 +413,9 @@ module.exports = function PjsConsole(document) {
     if (e.BufferArray.length > e.BufferMax) {
       e.BufferArray.splice(0, 1);
     } else {
-      e.javaconsole.scrollTop = e.javaconsole.scrollHeight;
+      e.javaconsole.scrollTop = parseInt(e.javaconsole.scrollHeight, 10);
     }
   };
-
-  e.showconsole = function () { e.wrapper.classList.remove("hidden"); };
-  e.hideconsole = function () { e.wrapper.classList.add("hidden"); };
-
-  e.closer.onclick = function () { e.hideconsole(); };
-
-  e.hideconsole();
 
   return e;
 };
@@ -7570,8 +7457,22 @@ module.exports = function withTouch(p, curElement, attachEventHandler, detachEve
     // Dropping support for IE clientX and clientY, switching to pageX and pageY
     // so we don't have to calculate scroll offset.
     // Removed in ticket #184. See rev: 2f106d1c7017fed92d045ba918db47d28e5c16f4
-    p.mouseX = event.pageX - offset.X;
-    p.mouseY = event.pageY - offset.Y;
+    
+    //Injected Code
+    var canvasWidth = curElement.getAttribute('width');
+    var canvasHeight = curElement.getAttribute('height');
+    var parentWidth = curElement.parentElement.offsetWidth;
+    var parentHeight = curElement.parentElement.offsetHeight;
+    var scale = Math.min((parentWidth / canvasWidth), (parentHeight / canvasHeight));
+    
+    //Modded Code
+    p.mouseX = (event.pageX - offset.X) / scale;
+    p.mouseY = (event.pageY - offset.Y) / scale;
+    
+    //Original Code
+    //p.mouseX = (event.pageX - offset.X) / scale;
+    //p.mouseY = (event.pageY - offset.Y) / scale;
+      
   }
 
   /**
