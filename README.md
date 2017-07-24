@@ -7,6 +7,9 @@ This forked version of Processing.js contains these slight changes:
   * The canvas should maintain the aspect ratio.
   * The formula for calculating the scale factor is as follows:
     * Math.min( ( parentWidth / canvasWidth ), ( parentHeight / canvasHeight )
+* The print and println functions log to a different console
+  * The console must have an id of 'new-processing-console'
+  * currently, it doesnt scroll to the bottom
 
 # Processing.js
 
